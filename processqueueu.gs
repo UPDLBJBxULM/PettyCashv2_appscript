@@ -1,4 +1,4 @@
-function testProcessQueue() {
+function processQueue() {
   var lock = LockService.getScriptLock();
   if (!lock.tryLock(5000)) {
     Logger.log("Tidak dapat memperoleh lock. Proses sudah berjalan.");
@@ -70,36 +70,36 @@ function testProcessQueue() {
 
       // Ambil nomor tujuan dari kolom F dan format ulang
       var rawPhone = row[6];
-      var phone1 = formatPhone2(rawPhone);
+      var phone1 = formatPhone(rawPhone);
 
       // Ambil nomor tambahan dari sheet reportTO
-      // var reportNum1 = ''; // KEU
-      // var reportNum2 = ''; // MUPDL
-      // var reportNum3YAN = ''; // Accountable YAN
-      // var reportNum4K3L = ''; // Accountable K3L
-      // if (reportSheet) {
-      //   reportNum1 = formatPhone2(reportSheet.getRange("D8").getValue());
-      //   reportNum2 = formatPhone2(reportSheet.getRange("D9").getValue());
+      var reportNum1 = ''; // KEU
+      var reportNum2 = ''; // MUPDL
+      var reportNum3YAN = ''; // Accountable YAN
+      var reportNum4K3L = ''; // Accountable K3L
+      if (reportSheet) {
+        reportNum1 = formatPhone(reportSheet.getRange("D8").getValue());
+        reportNum2 = formatPhone(reportSheet.getRange("D9").getValue());
 
-      //   // Ambil data terakhir dari sheet RENCANA kolom E
-      //   var lastRowRencana = sheet.getLastRow();
-      //   var accountableBag = sheet.getRange(lastRowRencana, 5).getValue();
+        // Ambil data terakhir dari sheet RENCANA kolom E
+        var lastRowRencana = sheet.getLastRow();
+        var accountableBag = sheet.getRange(lastRowRencana, 5).getValue();
 
-      //   // Ambil string pembanding dari sheet Publikasi (misalnya di kolom F1 dan F2)
-      //   var yanConditionString = reportSheet.getRange("C10").getValue(); // string YAN di C10
-      //   var k3lConditionString = reportSheet.getRange("C11").getValue(); // string K3L di C11
+        // Ambil string pembanding dari sheet Publikasi (misalnya di kolom F1 dan F2)
+        var yanConditionString = reportSheet.getRange("C10").getValue(); // string YAN di C10
+        var k3lConditionString = reportSheet.getRange("C11").getValue(); // string K3L di C11
 
-      //   reportNum3YAN = ''; // Inisialisasi sebagai nonaktif default
-      //   reportNum4K3L = ''; // Inisialisasi sebagai nonaktif default
+        reportNum3YAN = ''; // Inisialisasi sebagai nonaktif default
+        reportNum4K3L = ''; // Inisialisasi sebagai nonaktif default
 
-      //   if (accountableBag === yanConditionString) {
-      //     reportNum3YAN = formatPhone2(reportSheet.getRange("D10").getValue()); // Aktifkan reportNum3YAN
-      //     // reportNum4K3L tetap nonaktif karena sudah diinisialisasi di atas
-      //   } else if (accountableBag === k3lConditionString) {
-      //     reportNum4K3L = formatPhone2(reportSheet.getRange("D11").getValue()); // Aktifkan reportNum4K3L
-      //     // reportNum3YAN tetap nonaktif karena sudah diinisialisasi di atas
-      //   }
-      // }
+        if (accountableBag === yanConditionString) {
+          reportNum3YAN = formatPhone(reportSheet.getRange("D10").getValue()); // Aktifkan reportNum3YAN
+          // reportNum4K3L tetap nonaktif karena sudah diinisialisasi di atas
+        } else if (accountableBag === k3lConditionString) {
+          reportNum4K3L = formatPhone(reportSheet.getRange("D11").getValue()); // Aktifkan reportNum4K3L
+          // reportNum3YAN tetap nonaktif karena sudah diinisialisasi di atas
+        }
+      }
 
       // Ambil LinkONTXT
       var linkAR = ''; //"https://drive.google.com/drive/folders/1VGU3E8Dv0o0vXs2JXEul-ge-WabHjlah?usp=sharing"
@@ -148,7 +148,7 @@ function testProcessQueue() {
         "👤 *Requestor* " + "" + ": " + (requestor || 'Data tidak tersedia') + "\n" +
         "🏢 *Unit* " + "" + ": " + (unit || 'Data tidak tersedia') + "\n\n" +
         "❔ *Perihal* " + "" + ": " + (perihal || 'Data tidak tersedia') + "\n" +
-        "💰 *Nominal* " + "" + ": Rp. " + (formatRupiah1(nominal) || 'Data tidak tersedia') + "\n\n" +
+        "💰 *Nominal* " + "" + ": Rp. " + (formatRupiah(nominal) || 'Data tidak tersedia') + "\n\n" +
         "🗓️ *Start Date A/R* " + "" + ": " + formatDate(startDateAR) + "\n" +
         "🗓️ *End Date A/R* " + "" + ": " + formatDate(endDateAR) + "\n\n" +
         "silahkan pantau Rekapitulasi Realisasi pada link " + linkSRR + " dan Laporan Pertanggungjawaban (Accontability Report) pada folder link " + linkAR + "\n\n" +
@@ -220,12 +220,12 @@ function testProcessQueue() {
   }
 }
 
-function formatRupiah1(angka) {
+function formatRupiah(angka) {
   // Menggunakan toLocaleString untuk format ribuan
   return angka.toLocaleString('id-ID');
 }
 
-function formatPhone2(num) {
+function formatPhone(num) {
   if (!num) return '';
   num = num.toString().trim();
   if (num.startsWith('+628')) {
