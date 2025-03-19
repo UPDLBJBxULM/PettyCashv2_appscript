@@ -1,4 +1,4 @@
-function processQueue() {
+function testProcessQueue() {
   var lock = LockService.getScriptLock();
   if (!lock.tryLock(5000)) {
     Logger.log("Tidak dapat memperoleh lock. Proses sudah berjalan.");
@@ -39,7 +39,7 @@ function processQueue() {
         break;
       }
 
-      var dataRange = sheet.getRange(2, 1, lastRow - 1, 11).getValues(); // Dapatkan data A-K
+      var dataRange = sheet.getRange(2, 1, lastRow - 1, 12).getValues(); // Dapatkan data A-L
       var pendingIndex = -1;
       for (var i = 0; i < dataRange.length; i++) {
         if (dataRange[i][10] === "PENDING") { // Cari di kolom K
@@ -70,36 +70,36 @@ function processQueue() {
 
       // Ambil nomor tujuan dari kolom F dan format ulang
       var rawPhone = row[6];
-      var phone1 = formatPhone(rawPhone);
+      var phone1 = formatPhone2(rawPhone);
 
       // Ambil nomor tambahan dari sheet reportTO
       // var reportNum1 = ''; // KEU
       // var reportNum2 = ''; // MUPDL
       // var reportNum3YAN = ''; // Accountable YAN
       // var reportNum4K3L = ''; // Accountable K3L
-      if (reportSheet) {
-        reportNum1 = formatPhone(reportSheet.getRange("D8").getValue());
-        reportNum2 = formatPhone(reportSheet.getRange("D9").getValue());
+      // if (reportSheet) {
+      //   reportNum1 = formatPhone2(reportSheet.getRange("D8").getValue());
+      //   reportNum2 = formatPhone2(reportSheet.getRange("D9").getValue());
 
-        // Ambil data terakhir dari sheet RENCANA kolom E
-        var lastRowRencana = sheet.getLastRow();
-        var accountableBag = sheet.getRange(lastRowRencana, 5).getValue();
+      //   // Ambil data terakhir dari sheet RENCANA kolom E
+      //   var lastRowRencana = sheet.getLastRow();
+      //   var accountableBag = sheet.getRange(lastRowRencana, 5).getValue();
 
-        // Ambil string pembanding dari sheet Publikasi (misalnya di kolom F1 dan F2)
-        var yanConditionString = reportSheet.getRange("C10").getValue(); // string YAN di C10
-        var k3lConditionString = reportSheet.getRange("C11").getValue(); // string K3L di C11
+      //   // Ambil string pembanding dari sheet Publikasi (misalnya di kolom F1 dan F2)
+      //   var yanConditionString = reportSheet.getRange("C10").getValue(); // string YAN di C10
+      //   var k3lConditionString = reportSheet.getRange("C11").getValue(); // string K3L di C11
 
-        reportNum3YAN = ''; // Inisialisasi sebagai nonaktif default
-        reportNum4K3L = ''; // Inisialisasi sebagai nonaktif default
+      //   reportNum3YAN = ''; // Inisialisasi sebagai nonaktif default
+      //   reportNum4K3L = ''; // Inisialisasi sebagai nonaktif default
 
-        if (accountableBag === yanConditionString) {
-          reportNum3YAN = formatPhone(reportSheet.getRange("D10").getValue()); // Aktifkan reportNum3YAN
-          // reportNum4K3L tetap nonaktif karena sudah diinisialisasi di atas
-        } else if (accountableBag === k3lConditionString) {
-          reportNum4K3L = formatPhone(reportSheet.getRange("D11").getValue()); // Aktifkan reportNum4K3L
-          // reportNum3YAN tetap nonaktif karena sudah diinisialisasi di atas
-        }
-      }
+      //   if (accountableBag === yanConditionString) {
+      //     reportNum3YAN = formatPhone2(reportSheet.getRange("D10").getValue()); // Aktifkan reportNum3YAN
+      //     // reportNum4K3L tetap nonaktif karena sudah diinisialisasi di atas
+      //   } else if (accountableBag === k3lConditionString) {
+      //     reportNum4K3L = formatPhone2(reportSheet.getRange("D11").getValue()); // Aktifkan reportNum4K3L
+      //     // reportNum3YAN tetap nonaktif karena sudah diinisialisasi di atas
+      //   }
+      // }
 
       // Ambil LinkONTXT
       var linkAR = ''; //"https://drive.google.com/drive/folders/1VGU3E8Dv0o0vXs2JXEul-ge-WabHjlah?usp=sharing"
@@ -112,10 +112,10 @@ function processQueue() {
       // Kumpulkan semua nomor ke dalam array dan gabungkan menjadi string comma-separated
       var targets = [];
       if (phone1) targets.push(phone1);
-      if (reportNum1) targets.push(reportNum1); // KEU
-      if (reportNum2) targets.push(reportNum2); // MUPDL
-      if (reportNum3YAN) targets.push(reportNum3YAN); // Accountable YAN
-      if (reportNum4K3L) targets.push(reportNum4K3L); // Accountable K3L
+      // if (reportNum1) targets.push(reportNum1); // KEU
+      // if (reportNum2) targets.push(reportNum2); // MUPDL
+      // if (reportNum3YAN) targets.push(reportNum3YAN); // Accountable YAN
+      // if (reportNum4K3L) targets.push(reportNum4K3L); // Accountable K3L
       var phoneNumber = targets.join(",");
 
       function calculateStartDate(date) {
@@ -148,16 +148,28 @@ function processQueue() {
         "👤 *Requestor* " + "" + ": " + (requestor || 'Data tidak tersedia') + "\n" +
         "🏢 *Unit* " + "" + ": " + (unit || 'Data tidak tersedia') + "\n\n" +
         "❔ *Perihal* " + "" + ": " + (perihal || 'Data tidak tersedia') + "\n" +
-        "💰 *Nominal* " + "" + ": Rp. " + (formatRupiah(nominal) || 'Data tidak tersedia') + "\n\n" +
+        "💰 *Nominal* " + "" + ": Rp. " + (formatRupiah1(nominal) || 'Data tidak tersedia') + "\n\n" +
         "🗓️ *Start Date A/R* " + "" + ": " + formatDate(startDateAR) + "\n" +
         "🗓️ *End Date A/R* " + "" + ": " + formatDate(endDateAR) + "\n\n" +
         "silahkan pantau Rekapitulasi Realisasi pada link " + linkSRR + " dan Laporan Pertanggungjawaban (Accontability Report) pada folder link " + linkAR + "\n\n" +
         "_sent by: Auto Report System_";
 
+      var message2 = "Apakah permohonan disetujui?\n\n" +
+        "Ketik:\n" +
+        "*0* untuk menolak permohonan\n" +
+        "*1* untuk menyetujui permohonan\n\n"+
+        "_sent by: Auto Report System_";
+      
       var payload = {
         "target": phoneNumber,
         "message": message
       };
+
+      var payload2 = {
+        "target": phoneNumber,
+        "message" : message2
+    };
+
       var options = {
         "method": "post",
         "headers": { "Authorization": tokenFonnte },
@@ -165,14 +177,36 @@ function processQueue() {
         "muteHttpExceptions": true
       };
 
-      try {
+      var optionsVerify = {
+        "method": "post",
+        "headers": { "Authorization": tokenFonnte }, 
+        "payload": payload2,
+        "muteHttpExceptions": true
+      };
+
+      Logger.log("Payload: " + JSON.stringify(payload));
+      Logger.log("Payload2: " + JSON.stringify(payload2));
+
+
+       try {
         Utilities.sleep(3000);
         var response = UrlFetchApp.fetch(urlFonnte, options);
+      // Pastikan response sukses sebelum lanjut mengirim message2
+      if (response.getResponseCode() === 200) {
+        Utilities.sleep(2000); // Delay sebelum mengirim pesan kedua
+        var response2 = UrlFetchApp.fetch(urlFonnte, optionsVerify);
+    
+        Logger.log("Pesan pertama terkirim ke " + phoneNumber + ": " + response.getContentText());
+        Logger.log("Pesan kedua terkirim ke " + phoneNumber + ": " + response2.getContentText());
+      } else {
+        Logger.log("Gagal mengirim pesan pertama, tidak melanjutkan ke pesan kedua.");
+      }
+
         sheet.getRange(rowNum, 2).setValue(startDateAR);
         sheet.getRange(rowNum, 3).setValue(endDateAR);
-        Logger.log("Pesan terkirim ke " + phoneNumber + ": " + response.getContentText());
-
         sheet.getRange(rowNum, 11).setValue("SENT");
+        sheet.getRange(rowNum, 12).setValue("Menunggu Konfirmasi");
+        SpreadsheetApp.flush();
       } catch (error) {
         Logger.log("Error saat mengirim pesan: " + error);
       }
@@ -186,12 +220,12 @@ function processQueue() {
   }
 }
 
-function formatRupiah(angka) {
+function formatRupiah1(angka) {
   // Menggunakan toLocaleString untuk format ribuan
   return angka.toLocaleString('id-ID');
 }
 
-function formatPhone(num) {
+function formatPhone2(num) {
   if (!num) return '';
   num = num.toString().trim();
   if (num.startsWith('+628')) {
